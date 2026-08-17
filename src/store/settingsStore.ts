@@ -5,7 +5,6 @@ import { saveSettings, loadSettings } from '../services/storage/database';
 interface SettingsState extends AppSettings {
   initialized: boolean;
   loadSettings: () => Promise<void>;
-  setApiKey: (key: string) => Promise<void>;
   setDemoMode: (val: boolean) => Promise<void>;
   setReducedMotion: (val: boolean) => Promise<void>;
 }
@@ -36,19 +35,14 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
   loadSettings: async () => {
     const stored = await loadSettings();
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    // env var API key takes precedence over stored key
+    // API key is read only from the environment variable, never user-settable
     const envKey = import.meta.env.VITE_OPENROUTER_KEY ?? null;
     set({
       ...(stored ?? defaults),
-      apiKey: envKey ?? stored?.apiKey ?? null,
+      apiKey: envKey,
       reducedMotion: prefersReduced,
       initialized: true,
     });
-  },
-
-  setApiKey: async (key) => {
-    set({ apiKey: key || null });
-    await saveSettings(pickSettings({ ...get(), apiKey: key || null }));
   },
 
   setDemoMode: async (val) => {

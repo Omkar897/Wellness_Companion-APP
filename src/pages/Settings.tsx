@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
-import { Input } from '../components/ui/Input';
 import { MotionWrapper } from '../components/animations/MotionWrapper';
 import { useSettingsStore } from '../store/settingsStore';
 import { useUserStore } from '../store/userStore';
@@ -12,19 +11,10 @@ import { examLabel } from '../utils/helpers';
 
 export default function Settings() {
   const navigate = useNavigate();
-  const { apiKey, demoMode, setApiKey, setDemoMode, reducedMotion, setReducedMotion } =
-    useSettingsStore();
+  const { demoMode, setDemoMode, reducedMotion, setReducedMotion } = useSettingsStore();
   const { profile, clearUser } = useUserStore();
   const { loadEntries } = useJournalStore();
-  const [keyInput, setKeyInput] = useState(apiKey ?? '');
-  const [keyStatus, setKeyStatus] = useState<'idle' | 'saved'>('idle');
   const [showClearConfirm, setShowClearConfirm] = useState(false);
-
-  async function handleSaveKey() {
-    await setApiKey(keyInput);
-    setKeyStatus('saved');
-    setTimeout(() => setKeyStatus('idle'), 2000);
-  }
 
   async function handleClear() {
     clearAllData();
@@ -74,37 +64,6 @@ export default function Settings() {
           </Card>
         </MotionWrapper>
       )}
-
-      <MotionWrapper delay={0.1}>
-        <Card>
-          <h2 className="text-sm font-semibold text-white/70 mb-3">AI Integration</h2>
-          <p className="text-xs text-white/40 mb-3 leading-relaxed">
-            Enter your{' '}
-            <a
-              href="https://openrouter.ai"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-violet-400 hover:underline"
-            >
-              OpenRouter
-            </a>{' '}
-            API key to enable full AI features. Without it, the app uses smart fallbacks.
-          </p>
-          <div className="flex gap-2">
-            <Input
-              type="password"
-              placeholder="sk-or-v1-..."
-              value={keyInput}
-              onChange={(e) => setKeyInput(e.target.value)}
-              className="flex-1"
-              aria-label="OpenRouter API key"
-            />
-            <Button variant="secondary" size="sm" onClick={handleSaveKey}>
-              {keyStatus === 'saved' ? '✓ Saved' : 'Save'}
-            </Button>
-          </div>
-        </Card>
-      </MotionWrapper>
 
       <MotionWrapper delay={0.15}>
         <Card>

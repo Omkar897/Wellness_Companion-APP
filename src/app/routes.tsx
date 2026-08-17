@@ -10,7 +10,6 @@ const Companion = lazy(() => import('../pages/Companion'));
 const Mindfulness = lazy(() => import('../pages/Mindfulness'));
 const Onboarding = lazy(() => import('../pages/Onboarding'));
 const Settings = lazy(() => import('../pages/Settings'));
-
 function LoadingFallback() {
   return (
     <div className="flex items-center justify-center min-h-[200px]">
