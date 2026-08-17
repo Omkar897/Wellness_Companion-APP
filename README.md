@@ -101,7 +101,7 @@ echo "VITE_OPENROUTER_KEY=sk-or-v1-your-key-here" > .env.local
 npm run dev
 ```
 
-Open **http://localhost:5173**
+Open **https://wellness-companion-sepia.vercel.app/**
 
 > No API key? Use **Demo Mode** on the Settings page to explore with realistic sample data.
 
