@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Card } from '../components/ui/Card';
@@ -6,35 +5,30 @@ import { Button } from '../components/ui/Button';
 import { MoodRing } from '../components/mood/MoodRing';
 import { EmotionBadge } from '../components/mood/EmotionBadge';
 import { MotionWrapper } from '../components/animations/MotionWrapper';
-import { useUserStore } from '../store/userStore';
-import { useJournalStore } from '../store/journalStore';
-import { useMood } from '../hooks/useMood';
-import { daysUntilExam, examLabel, formatDate } from '../utils/helpers';
+import { useDashboard } from '../hooks/useDashboard';
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const { profile } = useUserStore();
-  const { entries, loadEntries } = useJournalStore();
-  const { stats, latestEntry } = useMood();
+  const data = useDashboard();
 
-  useEffect(() => {
-    loadEntries();
-  }, [loadEntries]);
-
-  if (!profile) {
+  if (!data) {
     navigate('/onboarding');
     return null;
   }
 
-  const daysLeft = daysUntilExam(profile.examDate);
-  const recentEntries = entries.slice(0, 3);
-
-  const trendConfig = {
-    improving: { label: 'Improving ↑', color: '#22c55e' },
-    stable: { label: 'Stable →', color: '#eab308' },
-    worsening: { label: 'Needs attention ↓', color: '#ef4444' },
-  };
-  const trend = trendConfig[stats.trend];
+  const {
+    profile,
+    daysLeft,
+    examLabel,
+    examDateFormatted,
+    examPhase,
+    examPhaseColor,
+    stats,
+    trend,
+    latestEntry,
+    recentEntries,
+    quickActions,
+  } = data;
 
   return (
     <div className="flex flex-col gap-5">
@@ -80,17 +74,16 @@ export default function Dashboard() {
         <MotionWrapper delay={0.1}>
           <Card className="flex flex-col items-center justify-center py-6 gap-2">
             <div className="text-4xl font-bold text-white">{daysLeft}</div>
-            <div className="text-sm text-white/50">days to {examLabel(profile.examType)}</div>
-            <div className="text-xs text-white/30 mt-1">{formatDate(profile.examDate)}</div>
+            <div className="text-sm text-white/50">days to {examLabel}</div>
+            <div className="text-xs text-white/30 mt-1">{examDateFormatted}</div>
             <div
               className="mt-2 text-xs px-3 py-1 rounded-full font-medium"
               style={{
-                color: daysLeft < 30 ? '#ef4444' : daysLeft < 60 ? '#f97316' : '#22c55e',
-                backgroundColor:
-                  daysLeft < 30 ? '#ef444415' : daysLeft < 60 ? '#f9731615' : '#22c55e15',
+                color: examPhaseColor,
+                backgroundColor: `${examPhaseColor}15`,
               }}
             >
-              {daysLeft < 30 ? 'Sprint phase' : daysLeft < 60 ? 'Final stretch' : 'Build phase'}
+              {examPhase}
             </div>
           </Card>
         </MotionWrapper>
@@ -127,16 +120,7 @@ export default function Dashboard() {
         <Card>
           <h2 className="text-sm font-semibold text-white/70 mb-3">Quick Actions</h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            {[
-              { label: 'Journal', path: '/journal', hint: 'Write freely' },
-              { label: 'Mood Pulse', path: '/journal?mode=pulse', hint: 'Quick check-in' },
-              {
-                label: 'Scenario Quiz',
-                path: '/journal?mode=quiz',
-                hint: 'Situation-based analysis',
-              },
-              { label: 'Mindfulness', path: '/mindfulness', hint: 'Breathe and reset' },
-            ].map((action) => (
+            {quickActions.map((action) => (
               <motion.button
                 key={action.label}
                 whileHover={{ scale: 1.03 }}
@@ -185,7 +169,7 @@ export default function Dashboard() {
         </MotionWrapper>
       )}
 
-      {entries.length === 0 && (
+      {recentEntries.length === 0 && (
         <MotionWrapper delay={0.25}>
           <Card className="text-center py-10">
             <div

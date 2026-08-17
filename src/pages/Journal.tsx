@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
+import { AIErrorBoundary } from '../components/ui/AIErrorBoundary';
 import { JournalEditor } from '../components/journal/JournalEditor';
 import { AIResponseCard } from '../components/journal/AIResponseCard';
 import { MoodSelector } from '../components/mood/MoodSelector';
@@ -207,19 +208,24 @@ export default function Journal() {
       <AnimatePresence>
         {submitted && result && (
           <motion.div key="result" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            {result.crisisDetected ? (
-              <AIResponseCard
-                emotionData={result.emotionData!}
-                response={result.wellnessResponse!}
-                crisisMessage={result.crisisMessage}
-              />
-            ) : result.emotionData && result.wellnessResponse ? (
-              <AIResponseCard emotionData={result.emotionData} response={result.wellnessResponse} />
-            ) : result.error ? (
-              <Card className="text-center py-8">
-                <p className="text-red-400 text-sm">{result.error}</p>
-              </Card>
-            ) : null}
+            <AIErrorBoundary>
+              {result.crisisDetected ? (
+                <AIResponseCard
+                  emotionData={result.emotionData!}
+                  response={result.wellnessResponse!}
+                  crisisMessage={result.crisisMessage}
+                />
+              ) : result.emotionData && result.wellnessResponse ? (
+                <AIResponseCard
+                  emotionData={result.emotionData}
+                  response={result.wellnessResponse}
+                />
+              ) : result.error ? (
+                <Card className="text-center py-8">
+                  <p className="text-red-400 text-sm">{result.error}</p>
+                </Card>
+              ) : null}
+            </AIErrorBoundary>
 
             <div className="flex gap-3 mt-4 justify-center">
               <Button variant="secondary" onClick={reset}>
