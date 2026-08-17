@@ -15,7 +15,12 @@ export const demoUser: UserProfile = {
 
 export const demoContext: PersonalContext = {
   dominantEmotions: ['anxiety', 'self_doubt', 'frustration', 'hope', 'focus'],
-  commonTriggers: ['mock test results', 'comparison with peers', 'late-night study sessions', 'physics numericals'],
+  commonTriggers: [
+    'mock test results',
+    'comparison with peers',
+    'late-night study sessions',
+    'physics numericals',
+  ],
   stressTimes: ['22:00', '23:00', '0:00', '14:00'],
   successfulStrategies: [
     'Pomodoro technique',

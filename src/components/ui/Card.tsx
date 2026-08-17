@@ -8,7 +8,13 @@ interface CardProps {
   animate?: boolean;
 }
 
-export function Card({ children, className = '', glow = false, onClick, animate = true }: CardProps) {
+export function Card({
+  children,
+  className = '',
+  glow = false,
+  onClick,
+  animate = true,
+}: CardProps) {
   const base = `
     glass rounded-2xl p-5
     ${glow ? 'shadow-lg shadow-violet-900/30 border-violet-500/20' : ''}
@@ -16,7 +22,12 @@ export function Card({ children, className = '', glow = false, onClick, animate 
     ${className}
   `;
 
-  if (!animate) return <div className={base} onClick={onClick}>{children}</div>;
+  if (!animate)
+    return (
+      <div className={base} onClick={onClick}>
+        {children}
+      </div>
+    );
 
   return (
     <motion.div

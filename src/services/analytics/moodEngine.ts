@@ -52,7 +52,11 @@ export function aggregateMoodTimeline(entries: JournalEntry[], days = 30): MoodD
 /** Count emotion frequency across entries */
 export function getEmotionFrequency(entries: JournalEntry[]): EmotionFrequency[] {
   const freq: Record<string, number> = {};
-  entries.forEach((e) => e.emotions.forEach((em) => { freq[em] = (freq[em] ?? 0) + 1; }));
+  entries.forEach((e) =>
+    e.emotions.forEach((em) => {
+      freq[em] = (freq[em] ?? 0) + 1;
+    }),
+  );
   const total = Object.values(freq).reduce((a, b) => a + b, 0) || 1;
   return Object.entries(freq)
     .map(([emotion, count]) => ({ emotion, count, percentage: Math.round((count / total) * 100) }))
@@ -63,7 +67,13 @@ export function getEmotionFrequency(entries: JournalEntry[]): EmotionFrequency[]
 /** Calculate mood statistics */
 export function calculateMoodStats(entries: JournalEntry[]): MoodStats {
   if (entries.length === 0) {
-    return { averageSeverity: 0, trend: 'stable', mostFrequentEmotion: 'none', streakDays: 0, totalEntries: 0 };
+    return {
+      averageSeverity: 0,
+      trend: 'stable',
+      mostFrequentEmotion: 'none',
+      streakDays: 0,
+      totalEntries: 0,
+    };
   }
 
   const avgSeverity = entries.reduce((sum, e) => sum + e.severity, 0) / entries.length;
@@ -102,7 +112,9 @@ export function pulseSeverity(pulse: MoodPulse): number {
 }
 
 /** Get heatmap data (day of week × hour) */
-export function getStressHeatmap(entries: JournalEntry[]): { day: number; hour: number; value: number }[] {
+export function getStressHeatmap(
+  entries: JournalEntry[],
+): { day: number; hour: number; value: number }[] {
   const matrix: Record<string, number[]> = {};
   entries.forEach((e) => {
     const d = new Date(e.timestamp);

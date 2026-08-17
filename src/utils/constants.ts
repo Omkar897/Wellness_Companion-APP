@@ -65,7 +65,11 @@ export const QUIZ_SCENARIOS = [
       { id: 'q4a', text: 'Pressure — I feel watched and judged', emotion: 'pressure' },
       { id: 'q4b', text: 'Supported — glad they care', emotion: 'gratitude' },
       { id: 'q4c', text: 'Irritated — I need space', emotion: 'irritability' },
-      { id: 'q4d', text: 'Withdrawn — give vague answers to avoid the topic', emotion: 'withdrawal' },
+      {
+        id: 'q4d',
+        text: 'Withdrawn — give vague answers to avoid the topic',
+        emotion: 'withdrawal',
+      },
     ],
   },
 ] as const;

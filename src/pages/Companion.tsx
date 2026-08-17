@@ -33,16 +33,20 @@ export default function Companion() {
     // Greeting message
     const greeting = profile
       ? `Hi ${profile.name}! I'm your AI wellness companion. I know you're preparing for ${profile.examType}. ${
-          latestEntry ? `I can see your recent stress level was ${latestEntry.severity}/10 with ${latestEntry.emotions.slice(0, 2).join(' and ')} emotions.` : ''
+          latestEntry
+            ? `I can see your recent stress level was ${latestEntry.severity}/10 with ${latestEntry.emotions.slice(0, 2).join(' and ')} emotions.`
+            : ''
         } What's on your mind today?`
       : "Hi! I'm your AI wellness companion. What's on your mind today?";
 
-    setMessages([{
-      id: '0',
-      role: 'assistant',
-      content: greeting,
-      timestamp: new Date(),
-    }]);
+    setMessages([
+      {
+        id: '0',
+        role: 'assistant',
+        content: greeting,
+        timestamp: new Date(),
+      },
+    ]);
   }, [profile, latestEntry]);
 
   useEffect(() => {
@@ -56,14 +60,18 @@ export default function Companion() {
     ];
 
     if (context) {
-      parts.push(`Context: Dominant emotions: ${context.dominantEmotions.join(', ')}. Known triggers: ${context.commonTriggers.join(', ')}.`);
+      parts.push(
+        `Context: Dominant emotions: ${context.dominantEmotions.join(', ')}. Known triggers: ${context.commonTriggers.join(', ')}.`,
+      );
     }
 
     if (stats.averageSeverity > 0) {
       parts.push(`Current average stress: ${stats.averageSeverity}/10. Trend: ${stats.trend}.`);
     }
 
-    parts.push(`Keep responses concise (2-4 sentences) unless asked for detail. If you detect crisis signals, provide crisis resources immediately.`);
+    parts.push(
+      `Keep responses concise (2-4 sentences) unless asked for detail. If you detect crisis signals, provide crisis resources immediately.`,
+    );
 
     return parts.join(' ');
   }
@@ -72,17 +80,25 @@ export default function Companion() {
     if (!input.trim() || loading) return;
 
     const safety = checkInputSafety(input);
-    const userMsg: Message = { id: Date.now().toString(), role: 'user', content: input, timestamp: new Date() };
+    const userMsg: Message = {
+      id: Date.now().toString(),
+      role: 'user',
+      content: input,
+      timestamp: new Date(),
+    };
     setMessages((prev) => [...prev, userMsg]);
     setInput('');
 
     if (!safety.safe && safety.crisisMessage) {
-      setMessages((prev) => [...prev, {
-        id: Date.now().toString() + '-crisis',
-        role: 'assistant',
-        content: safety.crisisMessage!,
-        timestamp: new Date(),
-      }]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now().toString() + '-crisis',
+          role: 'assistant',
+          content: safety.crisisMessage!,
+          timestamp: new Date(),
+        },
+      ]);
       return;
     }
 
@@ -95,12 +111,15 @@ export default function Companion() {
         `That's a really valid feeling. Many ${profile?.examType ?? 'exam'} students go through this. Remember that ${stats.trend === 'improving' ? "your recent trend shows improvement — you're moving in the right direction" : "progress isn't always linear and setbacks are part of the process"}. What would help most right now?`,
         `I hear you. Let's break this down. Would it help to try a quick breathing exercise, or would you prefer to talk through what's specifically bothering you today?`,
       ];
-      setMessages((prev) => [...prev, {
-        id: Date.now().toString(),
-        role: 'assistant',
-        content: demoResponses[Math.floor(Math.random() * demoResponses.length)],
-        timestamp: new Date(),
-      }]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now().toString(),
+          role: 'assistant',
+          content: demoResponses[Math.floor(Math.random() * demoResponses.length)],
+          timestamp: new Date(),
+        },
+      ]);
       setLoading(false);
       return;
     }
@@ -111,35 +130,46 @@ export default function Companion() {
         content: m.content,
       }));
 
-      const raw = await callOpenRouter({
-        model: AI_MODELS.WELLNESS_AGENT,
-        messages: [
-          { role: 'system', content: buildSystemPrompt() },
-          ...conversationHistory,
-          { role: 'user', content: input },
-        ],
-        temperature: 0.75,
-        max_tokens: 400,
-      }, apiKey);
+      const raw = await callOpenRouter(
+        {
+          model: AI_MODELS.WELLNESS_AGENT,
+          messages: [
+            { role: 'system', content: buildSystemPrompt() },
+            ...conversationHistory,
+            { role: 'user', content: input },
+          ],
+          temperature: 0.75,
+          max_tokens: 400,
+        },
+        apiKey,
+      );
 
       const responseSafety = checkResponseSafety(raw);
-      const content = !responseSafety.safe && responseSafety.crisisDetected
-        ? responseSafety.crisisMessage ?? raw
-        : raw;
+      const content =
+        !responseSafety.safe && responseSafety.crisisDetected
+          ? (responseSafety.crisisMessage ?? raw)
+          : raw;
 
-      setMessages((prev) => [...prev, {
-        id: Date.now().toString(),
-        role: 'assistant',
-        content,
-        timestamp: new Date(),
-      }]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now().toString(),
+          role: 'assistant',
+          content,
+          timestamp: new Date(),
+        },
+      ]);
     } catch {
-      setMessages((prev) => [...prev, {
-        id: Date.now().toString() + '-err',
-        role: 'assistant',
-        content: "I'm having trouble connecting right now. Please check your API key in settings, or switch to demo mode.",
-        timestamp: new Date(),
-      }]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now().toString() + '-err',
+          role: 'assistant',
+          content:
+            "I'm having trouble connecting right now. Please check your API key in settings, or switch to demo mode.",
+          timestamp: new Date(),
+        },
+      ]);
     } finally {
       setLoading(false);
     }
@@ -186,7 +216,12 @@ export default function Companion() {
             </motion.div>
           ))}
           {loading && (
-            <motion.div key="typing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-start">
+            <motion.div
+              key="typing"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex justify-start"
+            >
               <div className="glass px-4 py-3 rounded-2xl rounded-bl-sm flex gap-1">
                 {[0, 1, 2].map((i) => (
                   <motion.div
@@ -208,13 +243,24 @@ export default function Companion() {
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault();
+              sendMessage();
+            }
+          }}
           placeholder="Type a message... (Enter to send)"
           disabled={loading}
           aria-label="Message to AI companion"
           className="flex-1 px-4 py-3 glass rounded-xl text-white placeholder-white/30 text-sm focus:outline-none focus:border-violet-500 border border-transparent transition-all"
         />
-        <Button variant="primary" onClick={sendMessage} disabled={!input.trim()} loading={loading} aria-label="Send message">
+        <Button
+          variant="primary"
+          onClick={sendMessage}
+          disabled={!input.trim()}
+          loading={loading}
+          aria-label="Send message"
+        >
           ↑
         </Button>
       </div>

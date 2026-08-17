@@ -1,6 +1,11 @@
 import { create } from 'zustand';
 import type { UserProfile, PersonalContext } from '../types/user';
-import { saveUserProfile, loadUserProfile, savePersonalContext, loadPersonalContext } from '../services/storage/database';
+import {
+  saveUserProfile,
+  loadUserProfile,
+  savePersonalContext,
+  loadPersonalContext,
+} from '../services/storage/database';
 
 interface UserState {
   profile: UserProfile | null;

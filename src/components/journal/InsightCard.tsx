@@ -3,7 +3,7 @@ import { EmotionBadge } from '../mood/EmotionBadge';
 import { formatRelativeTime, severityToColor } from '../../utils/helpers';
 import type { JournalEntry } from '../../types/journal';
 
-const MODE_LABELS = { journal: '📝 Journal', quiz: '📊 Quiz', pulse: '⚡ Pulse' } as const;
+const MODE_LABELS = { journal: 'Journal', quiz: 'Quiz', pulse: 'Pulse' } as const;
 
 interface InsightCardProps {
   entry: JournalEntry;
@@ -34,9 +34,7 @@ export function InsightCard({ entry, index = 0 }: InsightCardProps) {
         </span>
       </div>
 
-      <p className="text-white/60 text-sm line-clamp-2 mb-3 leading-relaxed">
-        {entry.input}
-      </p>
+      <p className="text-white/60 text-sm line-clamp-2 mb-3 leading-relaxed">{entry.input}</p>
 
       <div className="flex flex-wrap gap-1.5">
         {entry.emotions.slice(0, 4).map((e) => (

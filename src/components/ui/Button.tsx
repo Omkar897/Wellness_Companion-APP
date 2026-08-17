@@ -25,7 +25,19 @@ const sizeClasses: Record<Size, string> = {
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ variant = 'primary', size = 'md', loading, icon, children, className = '', disabled, ...props }, ref) => {
+  (
+    {
+      variant = 'primary',
+      size = 'md',
+      loading,
+      icon,
+      children,
+      className = '',
+      disabled,
+      ...props
+    },
+    ref,
+  ) => {
     return (
       <motion.button
         ref={ref}
@@ -43,9 +55,18 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {loading ? (
           <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden>
-            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeDasharray="30 60" />
+            <circle
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="3"
+              strokeDasharray="30 60"
+            />
           </svg>
-        ) : icon}
+        ) : (
+          icon
+        )}
         {children}
       </motion.button>
     );

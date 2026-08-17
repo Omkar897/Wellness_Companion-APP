@@ -17,7 +17,9 @@ export function Modal({ open, onClose, title, children, size = 'md' }: ModalProp
 
   useEffect(() => {
     if (open) closeRef.current?.focus();
-    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
     document.addEventListener('keydown', handler);
     return () => document.removeEventListener('keydown', handler);
   }, [open, onClose]);
@@ -50,8 +52,16 @@ export function Modal({ open, onClose, title, children, size = 'md' }: ModalProp
           >
             {title && (
               <div className="flex items-center justify-between mb-4">
-                <h2 id="modal-title" className="text-lg font-semibold text-white">{title}</h2>
-                <Button ref={closeRef} variant="ghost" size="sm" onClick={onClose} aria-label="Close modal">
+                <h2 id="modal-title" className="text-lg font-semibold text-white">
+                  {title}
+                </h2>
+                <Button
+                  ref={closeRef}
+                  variant="ghost"
+                  size="sm"
+                  onClick={onClose}
+                  aria-label="Close modal"
+                >
                   ✕
                 </Button>
               </div>

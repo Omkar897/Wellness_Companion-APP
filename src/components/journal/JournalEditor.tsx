@@ -21,9 +21,12 @@ export function JournalEditor({
 }: JournalEditorProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const handleChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    onChange(e.target.value);
-  }, [onChange]);
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      onChange(e.target.value);
+    },
+    [onChange],
+  );
 
   // Auto-resize
   useEffect(() => {
@@ -64,9 +67,7 @@ export function JournalEditor({
           "
         />
         {/* Character count */}
-        <div className="absolute bottom-3 right-4 text-xs text-white/25">
-          {value.length} / 5000
-        </div>
+        <div className="absolute bottom-3 right-4 text-xs text-white/25">{value.length} / 5000</div>
       </motion.div>
 
       <div className="flex items-center justify-between">

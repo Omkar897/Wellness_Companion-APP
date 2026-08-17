@@ -2,9 +2,12 @@ import { useEffect, useRef } from 'react';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 
 interface Particle {
-  x: number; y: number;
-  vx: number; vy: number;
-  radius: number; opacity: number;
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  radius: number;
+  opacity: number;
   color: string;
 }
 
@@ -51,7 +54,12 @@ export function FloatingBackground() {
         if (p.y > canvas.height + p.radius) p.y = -p.radius;
 
         const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.radius);
-        grad.addColorStop(0, `${p.color}${Math.round(p.opacity * 255).toString(16).padStart(2, '0')}`);
+        grad.addColorStop(
+          0,
+          `${p.color}${Math.round(p.opacity * 255)
+            .toString(16)
+            .padStart(2, '0')}`,
+        );
         grad.addColorStop(1, 'transparent');
         ctx.fillStyle = grad;
         ctx.beginPath();
@@ -70,11 +78,5 @@ export function FloatingBackground() {
 
   if (reduced) return null;
 
-  return (
-    <canvas
-      ref={canvasRef}
-      className="fixed inset-0 pointer-events-none z-0"
-      aria-hidden
-    />
-  );
+  return <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-0" aria-hidden />;
 }

@@ -32,8 +32,16 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           aria-describedby={error ? `${inputId}-error` : hint ? `${inputId}-hint` : undefined}
           {...props}
         />
-        {error && <p id={`${inputId}-error`} className="text-xs text-red-400" role="alert">{error}</p>}
-        {hint && !error && <p id={`${inputId}-hint`} className="text-xs text-white/40">{hint}</p>}
+        {error && (
+          <p id={`${inputId}-error`} className="text-xs text-red-400" role="alert">
+            {error}
+          </p>
+        )}
+        {hint && !error && (
+          <p id={`${inputId}-hint`} className="text-xs text-white/40">
+            {hint}
+          </p>
+        )}
       </div>
     );
   },

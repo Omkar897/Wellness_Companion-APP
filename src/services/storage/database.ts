@@ -28,7 +28,10 @@ export async function loadJournalEntries(): Promise<JournalEntry[]> {
 
 export async function deleteJournalEntry(id: string): Promise<void> {
   const entries = await loadJournalEntries();
-  await secureSet(STORAGE_KEYS.JOURNALS, entries.filter((e) => e.id !== id));
+  await secureSet(
+    STORAGE_KEYS.JOURNALS,
+    entries.filter((e) => e.id !== id),
+  );
 }
 
 // ── Personal Context ───────────────────────────────────────────────────────
@@ -104,7 +107,11 @@ export async function exportAllData(): Promise<string> {
     loadPersonalContext(),
     loadWeeklyInsights(),
   ]);
-  return JSON.stringify({ profile, journals, context, insights, exportedAt: new Date().toISOString() }, null, 2);
+  return JSON.stringify(
+    { profile, journals, context, insights, exportedAt: new Date().toISOString() },
+    null,
+    2,
+  );
 }
 
 // ── Clear All ──────────────────────────────────────────────────────────────

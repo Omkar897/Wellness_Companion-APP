@@ -9,10 +9,17 @@ interface MoodSelectorProps {
 }
 
 export function MoodSelector({ value, onChange, disabled }: MoodSelectorProps) {
-  const moods = Object.entries(MOOD_PULSE_CONFIG) as [MoodPulse, typeof MOOD_PULSE_CONFIG[MoodPulse]][];
+  const moods = Object.entries(MOOD_PULSE_CONFIG) as [
+    MoodPulse,
+    (typeof MOOD_PULSE_CONFIG)[MoodPulse],
+  ][];
 
   return (
-    <div className="flex gap-3 flex-wrap justify-center" role="radiogroup" aria-label="Select your mood">
+    <div
+      className="flex gap-3 flex-wrap justify-center"
+      role="radiogroup"
+      aria-label="Select your mood"
+    >
       {moods.map(([mood, config], i) => {
         const selected = value === mood;
         return (
@@ -30,15 +37,20 @@ export function MoodSelector({ value, onChange, disabled }: MoodSelectorProps) {
             className={`
               flex flex-col items-center gap-2 px-4 py-3 rounded-xl
               border transition-all duration-200 cursor-pointer min-w-[80px]
-              ${selected
-                ? 'border-opacity-100 bg-white/10'
-                : 'border-white/10 bg-white/3 hover:border-white/20'
+              ${
+                selected
+                  ? 'border-opacity-100 bg-white/10'
+                  : 'border-white/10 bg-white/3 hover:border-white/20'
               }
               disabled:opacity-50 disabled:cursor-not-allowed
             `}
-            style={selected ? { borderColor: config.color, boxShadow: `0 0 12px ${config.color}40` } : {}}
+            style={
+              selected ? { borderColor: config.color, boxShadow: `0 0 12px ${config.color}40` } : {}
+            }
           >
-            <span className="text-2xl" aria-hidden>{config.emoji}</span>
+            <span className="text-2xl" aria-hidden>
+              {config.emoji}
+            </span>
             <span
               className="text-xs font-medium"
               style={{ color: selected ? config.color : '#9ca3af' }}

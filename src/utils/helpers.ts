@@ -11,7 +11,10 @@ export const JournalEntryInputSchema = z.object({
   text: z.string().min(10, 'Entry must be at least 10 characters').max(5000),
 });
 
-export const ApiKeySchema = z.string().regex(/^sk-or-v1-/, 'Must be a valid OpenRouter API key').or(z.literal(''));
+export const ApiKeySchema = z
+  .string()
+  .regex(/^sk-or-v1-/, 'Must be a valid OpenRouter API key')
+  .or(z.literal(''));
 
 export function daysUntilExam(examDate: string): number {
   const exam = new Date(examDate);
@@ -22,7 +25,9 @@ export function daysUntilExam(examDate: string): number {
 
 export function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString('en-IN', {
-    day: 'numeric', month: 'short', year: 'numeric',
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
   });
 }
 
@@ -68,7 +73,10 @@ export function generateId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 }
 
-export function debounce<T extends (...args: unknown[]) => unknown>(fn: T, ms: number): (...args: Parameters<T>) => void {
+export function debounce<T extends (...args: unknown[]) => unknown>(
+  fn: T,
+  ms: number,
+): (...args: Parameters<T>) => void {
   let timer: ReturnType<typeof setTimeout>;
   return (...args: Parameters<T>) => {
     clearTimeout(timer);

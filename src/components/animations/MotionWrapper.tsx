@@ -8,7 +8,12 @@ interface MotionWrapperProps {
   direction?: 'up' | 'down' | 'left' | 'right' | 'none';
 }
 
-export function MotionWrapper({ children, delay = 0, className = '', direction = 'up' }: MotionWrapperProps) {
+export function MotionWrapper({
+  children,
+  delay = 0,
+  className = '',
+  direction = 'up',
+}: MotionWrapperProps) {
   const reduced = useReducedMotion();
 
   const offsets = { up: { y: 16 }, down: { y: -16 }, left: { x: 16 }, right: { x: -16 }, none: {} };

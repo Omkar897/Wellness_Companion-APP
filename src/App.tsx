@@ -1,3 +1,2 @@
 // Entry point redirects to app/App.tsx
-export { default } from './app/App'
-
+export { default } from './app/App';

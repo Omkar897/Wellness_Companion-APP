@@ -31,7 +31,10 @@ export const useJournalStore = create<JournalState>((set, _get) => ({
 
   loadEntries: async () => {
     set({ isLoading: true });
-    const [entries, weeklyInsights] = await Promise.all([loadJournalEntries(), loadWeeklyInsights()]);
+    const [entries, weeklyInsights] = await Promise.all([
+      loadJournalEntries(),
+      loadWeeklyInsights(),
+    ]);
     set({ entries, weeklyInsights, isLoading: false });
   },
 

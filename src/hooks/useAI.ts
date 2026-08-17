@@ -25,60 +25,68 @@ export function useAI() {
   const { profile, context } = useUserStore();
   const { entries } = useJournalStore();
 
-  const analyze = useCallback(async (text: string): Promise<AIResult | null> => {
-    // Safety check on input
-    const inputSafety = checkInputSafety(text);
-    if (!inputSafety.safe) {
-      const r: AIResult = {
-        emotionData: null,
-        wellnessResponse: null,
-        crisisDetected: true,
-        crisisMessage: inputSafety.crisisMessage,
-        error: null,
-      };
-      setResult(r);
-      return r;
-    }
-
-    setLoading(true);
-    setResult(null);
-
-    try {
-      const key = demoMode ? null : apiKey;
-
-      const emotionData = await extractEmotions(text, key);
-      const wellnessResponse = profile
-        ? await generateWellnessResponse(emotionData, text, profile, context, key)
-        : null;
-
-      // Safety check on AI output
-      if (wellnessResponse) {
-        const outputSafety = checkResponseSafety(wellnessResponse.explanation);
-        if (!outputSafety.safe && outputSafety.crisisDetected) {
-          const r: AIResult = {
-            emotionData,
-            wellnessResponse: null,
-            crisisDetected: true,
-            crisisMessage: outputSafety.crisisMessage,
-            error: null,
-          };
-          setResult(r);
-          return r;
-        }
+  const analyze = useCallback(
+    async (text: string): Promise<AIResult | null> => {
+      // Safety check on input
+      const inputSafety = checkInputSafety(text);
+      if (!inputSafety.safe) {
+        const r: AIResult = {
+          emotionData: null,
+          wellnessResponse: null,
+          crisisDetected: true,
+          crisisMessage: inputSafety.crisisMessage,
+          error: null,
+        };
+        setResult(r);
+        return r;
       }
 
-      const r: AIResult = { emotionData, wellnessResponse, crisisDetected: false, error: null };
-      setResult(r);
-      return r;
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Analysis failed';
-      const r: AIResult = { emotionData: null, wellnessResponse: null, crisisDetected: false, error: message };
-      setResult(r);
-      return r;
-    } finally {
-      setLoading(false);
-    }
-  }, [apiKey, demoMode, profile, context]);
+      setLoading(true);
+      setResult(null);
+
+      try {
+        const key = demoMode ? null : apiKey;
+
+        const emotionData = await extractEmotions(text, key);
+        const wellnessResponse = profile
+          ? await generateWellnessResponse(emotionData, text, profile, context, key)
+          : null;
+
+        // Safety check on AI output
+        if (wellnessResponse) {
+          const outputSafety = checkResponseSafety(wellnessResponse.explanation);
+          if (!outputSafety.safe && outputSafety.crisisDetected) {
+            const r: AIResult = {
+              emotionData,
+              wellnessResponse: null,
+              crisisDetected: true,
+              crisisMessage: outputSafety.crisisMessage,
+              error: null,
+            };
+            setResult(r);
+            return r;
+          }
+        }
+
+        const r: AIResult = { emotionData, wellnessResponse, crisisDetected: false, error: null };
+        setResult(r);
+        return r;
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Analysis failed';
+        const r: AIResult = {
+          emotionData: null,
+          wellnessResponse: null,
+          crisisDetected: false,
+          error: message,
+        };
+        setResult(r);
+        return r;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [apiKey, demoMode, profile, context],
+  );
 
   const generateWeeklyInsight = useCallback(async () => {
     if (!profile) return null;

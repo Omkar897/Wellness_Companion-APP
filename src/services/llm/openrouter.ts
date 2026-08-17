@@ -17,7 +17,7 @@ export async function callOpenRouter(
   attempt = 0,
 ): Promise<string> {
   const headers = {
-    'Authorization': `Bearer ${apiKey}`,
+    Authorization: `Bearer ${apiKey}`,
     'Content-Type': 'application/json',
     'HTTP-Referer': window.location.origin,
     'X-Title': 'AI Wellness Companion',
@@ -65,7 +65,11 @@ export async function callOpenRouter(
   const data: OpenRouterResponse = await response.json();
   const content = data.choices?.[0]?.message?.content;
   if (!content) {
-    const error: AIError = { code: 'INVALID_RESPONSE', message: 'Empty response from AI', retryable: true };
+    const error: AIError = {
+      code: 'INVALID_RESPONSE',
+      message: 'Empty response from AI',
+      retryable: true,
+    };
     throw error;
   }
   return content;

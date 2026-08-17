@@ -6,21 +6,22 @@ import { Button } from '../components/ui/Button';
 import { JournalEditor } from '../components/journal/JournalEditor';
 import { AIResponseCard } from '../components/journal/AIResponseCard';
 import { MoodSelector } from '../components/mood/MoodSelector';
+import { GamifiedQuiz } from '../components/journal/GamifiedQuiz';
 import { MotionWrapper } from '../components/animations/MotionWrapper';
 import { useAI } from '../hooks/useAI';
 import { useJournalStore } from '../store/journalStore';
 import { useUserStore } from '../store/userStore';
-import { QUIZ_SCENARIOS } from '../utils/constants';
 import { pulseSeverity } from '../services/analytics/moodEngine';
 import type { MoodPulse } from '../types/emotion';
 import type { JournalMode } from '../types/journal';
+import type { QuizResult } from '../components/journal/GamifiedQuiz';
 
 type UIMode = 'journal' | 'pulse' | 'quiz';
 
 const MODE_LABELS: Record<UIMode, string> = {
-  journal: '📝 Journal',
-  pulse: '⚡ Mood Pulse',
-  quiz: '📊 Scenario Quiz',
+  journal: 'Journal',
+  pulse: 'Mood Pulse',
+  quiz: 'Scenario Quiz',
 };
 
 export default function Journal() {
@@ -28,7 +29,6 @@ export default function Journal() {
   const [mode, setMode] = useState<UIMode>((searchParams.get('mode') as UIMode) ?? 'journal');
   const [text, setText] = useState('');
   const [selectedMood, setSelectedMood] = useState<MoodPulse | null>(null);
-  const [quizAnswers, setQuizAnswers] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
 
   const { loading, result, analyze } = useAI();
@@ -82,25 +82,15 @@ export default function Journal() {
     setSubmitted(true);
   }
 
-  async function handleQuizSubmit() {
-    const answers = Object.values(quizAnswers);
-    if (answers.length === 0) return;
-    const quizText = QUIZ_SCENARIOS
-      .filter((s) => quizAnswers[s.id])
-      .map((s) => {
-        const opt = s.options.find((o) => o.id === quizAnswers[s.id]);
-        return `${s.text} → "${opt?.text}"`;
-      })
-      .join('\n');
-
-    const aiResult = await analyze(quizText);
+  async function handleQuizComplete(quizResult: QuizResult) {
+    const aiResult = await analyze(quizResult.quizText);
     if (!aiResult) return;
 
     await addEntry({
       timestamp: new Date().toISOString(),
-      input: quizText,
+      input: quizResult.quizText,
       mode: 'quiz',
-      emotions: aiResult.emotionData?.emotions ?? answers,
+      emotions: aiResult.emotionData?.emotions ?? quizResult.emotions,
       triggers: aiResult.emotionData?.triggers ?? [],
       severity: aiResult.emotionData?.severity ?? 5,
       burnoutRisk: aiResult.emotionData?.burnoutRisk ?? 'medium',
@@ -113,7 +103,6 @@ export default function Journal() {
   function reset() {
     setText('');
     setSelectedMood(null);
-    setQuizAnswers({});
     setSubmitted(false);
   }
 
@@ -122,7 +111,9 @@ export default function Journal() {
       <MotionWrapper>
         <h1 className="text-2xl font-bold text-white">How are you feeling?</h1>
         <p className="text-white/50 text-sm mt-1">
-          {profile ? `Your AI companion is ready, ${profile.name}.` : 'Choose a mode to log your emotional state.'}
+          {profile
+            ? `Your AI companion is ready, ${profile.name}.`
+            : 'Choose a mode to log your emotional state.'}
         </p>
       </MotionWrapper>
 
@@ -130,7 +121,11 @@ export default function Journal() {
         <>
           {/* Mode switcher */}
           <MotionWrapper delay={0.05}>
-            <div className="flex gap-2 p-1 glass rounded-xl w-fit" role="tablist" aria-label="Journal mode">
+            <div
+              className="flex gap-2 p-1 glass rounded-xl w-fit"
+              role="tablist"
+              aria-label="Journal mode"
+            >
               {(Object.keys(MODE_LABELS) as UIMode[]).map((m) => (
                 <button
                   key={m}
@@ -149,7 +144,12 @@ export default function Journal() {
 
           <AnimatePresence mode="wait">
             {mode === 'journal' && (
-              <motion.div key="journal" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+              <motion.div
+                key="journal"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+              >
                 <Card>
                   <JournalEditor
                     value={text}
@@ -162,12 +162,26 @@ export default function Journal() {
             )}
 
             {mode === 'pulse' && (
-              <motion.div key="pulse" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+              <motion.div
+                key="pulse"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+              >
                 <Card>
                   <h2 className="text-white/70 text-sm mb-4">How are you feeling right now?</h2>
-                  <MoodSelector value={selectedMood} onChange={setSelectedMood} disabled={loading} />
+                  <MoodSelector
+                    value={selectedMood}
+                    onChange={setSelectedMood}
+                    disabled={loading}
+                  />
                   <div className="mt-5 flex justify-end">
-                    <Button variant="primary" onClick={handlePulseSubmit} disabled={!selectedMood} loading={loading}>
+                    <Button
+                      variant="primary"
+                      onClick={handlePulseSubmit}
+                      disabled={!selectedMood}
+                      loading={loading}
+                    >
                       Log Mood
                     </Button>
                   </div>
@@ -176,48 +190,13 @@ export default function Journal() {
             )}
 
             {mode === 'quiz' && (
-              <motion.div key="quiz" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                className="flex flex-col gap-4"
+              <motion.div
+                key="quiz"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
               >
-                {QUIZ_SCENARIOS.map((scenario, si) => (
-                  <Card key={scenario.id}>
-                    <p className="text-white/80 text-sm font-medium mb-3">{si + 1}. {scenario.text}</p>
-                    <div className="flex flex-col gap-2">
-                      {scenario.options.map((opt) => (
-                        <label key={opt.id} className="cursor-pointer">
-                          <input
-                            type="radio"
-                            name={scenario.id}
-                            value={opt.id}
-                            checked={quizAnswers[scenario.id] === opt.id}
-                            onChange={() => setQuizAnswers((prev) => ({ ...prev, [scenario.id]: opt.id }))}
-                            className="sr-only"
-                          />
-                          <motion.div
-                            whileHover={{ x: 2 }}
-                            className={`px-4 py-2.5 rounded-xl text-sm border transition-all duration-200
-                              ${quizAnswers[scenario.id] === opt.id
-                                ? 'border-violet-500 bg-violet-600/20 text-violet-200'
-                                : 'border-white/10 bg-white/3 text-white/60 hover:border-white/20'
-                              }`}
-                          >
-                            {opt.text}
-                          </motion.div>
-                        </label>
-                      ))}
-                    </div>
-                  </Card>
-                ))}
-                <div className="flex justify-end">
-                  <Button
-                    variant="primary"
-                    onClick={handleQuizSubmit}
-                    disabled={Object.keys(quizAnswers).length === 0}
-                    loading={loading}
-                  >
-                    Analyze Quiz
-                  </Button>
-                </div>
+                <GamifiedQuiz onComplete={handleQuizComplete} loading={loading} />
               </motion.div>
             )}
           </AnimatePresence>
@@ -229,7 +208,11 @@ export default function Journal() {
         {submitted && result && (
           <motion.div key="result" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             {result.crisisDetected ? (
-              <AIResponseCard emotionData={result.emotionData!} response={result.wellnessResponse!} crisisMessage={result.crisisMessage} />
+              <AIResponseCard
+                emotionData={result.emotionData!}
+                response={result.wellnessResponse!}
+                crisisMessage={result.crisisMessage}
+              />
             ) : result.emotionData && result.wellnessResponse ? (
               <AIResponseCard emotionData={result.emotionData} response={result.wellnessResponse} />
             ) : result.error ? (
@@ -239,15 +222,23 @@ export default function Journal() {
             ) : null}
 
             <div className="flex gap-3 mt-4 justify-center">
-              <Button variant="secondary" onClick={reset}>New Entry</Button>
-              <Button variant="ghost" onClick={() => window.history.back()}>← Back</Button>
+              <Button variant="secondary" onClick={reset}>
+                New Entry
+              </Button>
+              <Button variant="ghost" onClick={() => window.history.back()}>
+                Back
+              </Button>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
       {loading && !submitted && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center gap-3 py-8">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="flex flex-col items-center gap-3 py-8"
+        >
           <div className="flex gap-1">
             {[0, 1, 2].map((i) => (
               <motion.div
@@ -264,3 +255,5 @@ export default function Journal() {
     </div>
   );
 }
+
+

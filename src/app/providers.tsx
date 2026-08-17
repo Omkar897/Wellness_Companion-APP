@@ -25,9 +25,7 @@ export function Providers({ children }: ProvidersProps) {
   return (
     <BrowserRouter>
       <ErrorBoundary>
-        <AppInitializer>
-          {children}
-        </AppInitializer>
+        <AppInitializer>{children}</AppInitializer>
       </ErrorBoundary>
     </BrowserRouter>
   );

@@ -12,7 +12,8 @@ import { examLabel } from '../utils/helpers';
 
 export default function Settings() {
   const navigate = useNavigate();
-  const { apiKey, demoMode, setApiKey, setDemoMode, reducedMotion, setReducedMotion } = useSettingsStore();
+  const { apiKey, demoMode, setApiKey, setDemoMode, reducedMotion, setReducedMotion } =
+    useSettingsStore();
   const { profile, clearUser } = useUserStore();
   const { loadEntries } = useJournalStore();
   const [keyInput, setKeyInput] = useState(apiKey ?? '');
@@ -78,7 +79,16 @@ export default function Settings() {
         <Card>
           <h2 className="text-sm font-semibold text-white/70 mb-3">AI Integration</h2>
           <p className="text-xs text-white/40 mb-3 leading-relaxed">
-            Enter your <a href="https://openrouter.ai" target="_blank" rel="noopener noreferrer" className="text-violet-400 hover:underline">OpenRouter</a> API key to enable full AI features. Without it, the app uses smart fallbacks.
+            Enter your{' '}
+            <a
+              href="https://openrouter.ai"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-violet-400 hover:underline"
+            >
+              OpenRouter
+            </a>{' '}
+            API key to enable full AI features. Without it, the app uses smart fallbacks.
           </p>
           <div className="flex gap-2">
             <Input
@@ -102,7 +112,9 @@ export default function Settings() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-white/70 text-sm">Use sample student data</p>
-              <p className="text-white/40 text-xs mt-0.5">Shows 7-day demo history without API keys</p>
+              <p className="text-white/40 text-xs mt-0.5">
+                Shows 7-day demo history without API keys
+              </p>
             </div>
             <button
               role="switch"
@@ -144,15 +156,25 @@ export default function Settings() {
         <Card>
           <h2 className="text-sm font-semibold text-white/70 mb-3">Data</h2>
           <div className="flex gap-3">
-            <Button variant="secondary" size="sm" onClick={handleExport}>Export JSON</Button>
-            <Button variant="danger" size="sm" onClick={() => setShowClearConfirm(true)}>Clear All Data</Button>
+            <Button variant="secondary" size="sm" onClick={handleExport}>
+              Export JSON
+            </Button>
+            <Button variant="danger" size="sm" onClick={() => setShowClearConfirm(true)}>
+              Clear All Data
+            </Button>
           </div>
           {showClearConfirm && (
             <div className="mt-3 p-3 rounded-xl bg-red-950/40 border border-red-500/30">
-              <p className="text-red-300 text-sm mb-3">This will delete all your data. This cannot be undone.</p>
+              <p className="text-red-300 text-sm mb-3">
+                This will delete all your data. This cannot be undone.
+              </p>
               <div className="flex gap-2">
-                <Button variant="danger" size="sm" onClick={handleClear}>Yes, Delete Everything</Button>
-                <Button variant="ghost" size="sm" onClick={() => setShowClearConfirm(false)}>Cancel</Button>
+                <Button variant="danger" size="sm" onClick={handleClear}>
+                  Yes, Delete Everything
+                </Button>
+                <Button variant="ghost" size="sm" onClick={() => setShowClearConfirm(false)}>
+                  Cancel
+                </Button>
               </div>
             </div>
           )}

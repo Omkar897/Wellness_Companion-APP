@@ -7,8 +7,13 @@ import { generateId } from '../../utils/helpers';
 const FALLBACK_INSIGHT = (entries: JournalEntry[]): WeeklyInsight => {
   const allEmotions = entries.flatMap((e) => e.emotions);
   const freq: Record<string, number> = {};
-  allEmotions.forEach((e) => { freq[e] = (freq[e] ?? 0) + 1; });
-  const top = Object.entries(freq).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([e]) => e);
+  allEmotions.forEach((e) => {
+    freq[e] = (freq[e] ?? 0) + 1;
+  });
+  const top = Object.entries(freq)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3)
+    .map(([e]) => e);
   const allTriggers = [...new Set(entries.flatMap((e) => e.triggers))];
   const avgSeverity = entries.reduce((sum, e) => sum + e.severity, 0) / (entries.length || 1);
 
@@ -27,9 +32,10 @@ const FALLBACK_INSIGHT = (entries: JournalEntry[]): WeeklyInsight => {
       'Use the Pomodoro technique to prevent focus fatigue',
       'Schedule regular check-ins with your support system',
     ],
-    progressNote: avgSeverity < 5
-      ? "You are managing stress well this week. Keep up the healthy habits."
-      : "This week was tough. Remember: acknowledging difficulty is itself progress.",
+    progressNote:
+      avgSeverity < 5
+        ? 'You are managing stress well this week. Keep up the healthy habits.'
+        : 'This week was tough. Remember: acknowledging difficulty is itself progress.',
     emotionData: entries.map((e) => ({
       emotions: e.emotions,
       triggers: e.triggers,

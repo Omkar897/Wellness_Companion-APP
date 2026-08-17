@@ -37,7 +37,13 @@ export function EmotionBadge({ emotion, size = 'md', animate = true }: EmotionBa
 
   return (
     <Wrapper
-      {...(animate ? { initial: { scale: 0, opacity: 0 }, animate: { scale: 1, opacity: 1 }, transition: { duration: 0.2 } } : {})}
+      {...(animate
+        ? {
+            initial: { scale: 0, opacity: 0 },
+            animate: { scale: 1, opacity: 1 },
+            transition: { duration: 0.2 },
+          }
+        : {})}
       className={`inline-flex items-center rounded-full font-medium
         ${size === 'sm' ? 'px-2 py-0.5 text-xs' : 'px-3 py-1 text-sm'}
       `}

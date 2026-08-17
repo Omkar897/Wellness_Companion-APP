@@ -12,12 +12,15 @@ export type EmotionData = z.infer<typeof EmotionSchema>;
 
 export type MoodPulse = 'overwhelmed' | 'struggling' | 'okay' | 'focused' | 'confident';
 
-export const MOOD_PULSE_CONFIG: Record<MoodPulse, { label: string; color: string; emoji: string; value: number }> = {
+export const MOOD_PULSE_CONFIG: Record<
+  MoodPulse,
+  { label: string; color: string; emoji: string; value: number }
+> = {
   overwhelmed: { label: 'Overwhelmed', color: '#ef4444', emoji: '😰', value: 1 },
-  struggling:  { label: 'Struggling',  color: '#f97316', emoji: '😟', value: 3 },
-  okay:        { label: 'Okay',        color: '#eab308', emoji: '😐', value: 5 },
-  focused:     { label: 'Focused',     color: '#22c55e', emoji: '🎯', value: 7 },
-  confident:   { label: 'Confident',   color: '#7c3aed', emoji: '😊', value: 9 },
+  struggling: { label: 'Struggling', color: '#f97316', emoji: '😟', value: 3 },
+  okay: { label: 'Okay', color: '#eab308', emoji: '😐', value: 5 },
+  focused: { label: 'Focused', color: '#22c55e', emoji: '🎯', value: 7 },
+  confident: { label: 'Confident', color: '#7c3aed', emoji: '😊', value: 9 },
 };
 
 export interface QuizScenario {

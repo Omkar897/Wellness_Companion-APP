@@ -17,9 +17,14 @@ export default function Dashboard() {
   const { entries, loadEntries } = useJournalStore();
   const { stats, latestEntry } = useMood();
 
-  useEffect(() => { loadEntries(); }, [loadEntries]);
+  useEffect(() => {
+    loadEntries();
+  }, [loadEntries]);
 
-  if (!profile) { navigate('/onboarding'); return null; }
+  if (!profile) {
+    navigate('/onboarding');
+    return null;
+  }
 
   const daysLeft = daysUntilExam(profile.examDate);
   const recentEntries = entries.slice(0, 3);
@@ -37,8 +42,14 @@ export default function Dashboard() {
       <MotionWrapper>
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-white">Hello, {profile.name} 👋</h1>
-            <p className="text-white/50 text-sm mt-0.5">{new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
+            <h1 className="text-2xl font-bold text-white">Hello, {profile.name}</h1>
+            <p className="text-white/50 text-sm mt-0.5">
+              {new Date().toLocaleDateString('en-IN', {
+                weekday: 'long',
+                day: 'numeric',
+                month: 'long',
+              })}
+            </p>
           </div>
           <Button variant="primary" size="sm" onClick={() => navigate('/journal')}>
             + Log Mood
@@ -75,10 +86,11 @@ export default function Dashboard() {
               className="mt-2 text-xs px-3 py-1 rounded-full font-medium"
               style={{
                 color: daysLeft < 30 ? '#ef4444' : daysLeft < 60 ? '#f97316' : '#22c55e',
-                backgroundColor: daysLeft < 30 ? '#ef444415' : daysLeft < 60 ? '#f9731615' : '#22c55e15',
+                backgroundColor:
+                  daysLeft < 30 ? '#ef444415' : daysLeft < 60 ? '#f9731615' : '#22c55e15',
               }}
             >
-              {daysLeft < 30 ? '⚡ Sprint phase' : daysLeft < 60 ? '🎯 Final stretch' : '📚 Build phase'}
+              {daysLeft < 30 ? 'Sprint phase' : daysLeft < 60 ? 'Final stretch' : 'Build phase'}
             </div>
           </Card>
         </MotionWrapper>
@@ -88,7 +100,9 @@ export default function Dashboard() {
           <Card className="flex flex-col gap-4 py-5">
             <div>
               <p className="text-xs text-white/40 mb-1">Mood Trend</p>
-              <p className="font-semibold text-sm" style={{ color: trend.color }}>{trend.label}</p>
+              <p className="font-semibold text-sm" style={{ color: trend.color }}>
+                {trend.label}
+              </p>
             </div>
             <div>
               <p className="text-xs text-white/40 mb-1">Avg. Severity</p>
@@ -96,7 +110,9 @@ export default function Dashboard() {
             </div>
             <div>
               <p className="text-xs text-white/40 mb-1">Journal Streak</p>
-              <p className="font-semibold text-white">{stats.streakDays} day{stats.streakDays !== 1 ? 's' : ''}</p>
+              <p className="font-semibold text-white">
+                {stats.streakDays} day{stats.streakDays !== 1 ? 's' : ''}
+              </p>
             </div>
             <div>
               <p className="text-xs text-white/40 mb-1">Total Entries</p>
@@ -112,10 +128,14 @@ export default function Dashboard() {
           <h2 className="text-sm font-semibold text-white/70 mb-3">Quick Actions</h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {[
-              { label: '📝 Journal', path: '/journal', hint: 'Write freely' },
-              { label: '⚡ Mood Pulse', path: '/journal?mode=pulse', hint: 'Quick check-in' },
-              { label: '📊 Quiz', path: '/journal?mode=quiz', hint: 'Scenario quiz' },
-              { label: '🧘 Mindfulness', path: '/mindfulness', hint: 'Breathe & reset' },
+              { label: 'Journal', path: '/journal', hint: 'Write freely' },
+              { label: 'Mood Pulse', path: '/journal?mode=pulse', hint: 'Quick check-in' },
+              {
+                label: 'Scenario Quiz',
+                path: '/journal?mode=quiz',
+                hint: 'Situation-based analysis',
+              },
+              { label: 'Mindfulness', path: '/mindfulness', hint: 'Breathe and reset' },
             ].map((action) => (
               <motion.button
                 key={action.label}
@@ -138,14 +158,19 @@ export default function Dashboard() {
           <Card>
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-sm font-semibold text-white/70">Recent Journal</h2>
-              <Button variant="ghost" size="sm" onClick={() => navigate('/insights')}>View all</Button>
+              <Button variant="ghost" size="sm" onClick={() => navigate('/insights')}>
+                View all
+              </Button>
             </div>
             <div className="flex flex-col gap-2">
               {recentEntries.map((entry) => (
                 <div key={entry.id} className="flex items-center gap-3 p-3 rounded-xl bg-white/3">
                   <div
                     className="w-2 h-2 rounded-full shrink-0"
-                    style={{ backgroundColor: entry.severity > 7 ? '#ef4444' : entry.severity > 5 ? '#f97316' : '#22c55e' }}
+                    style={{
+                      backgroundColor:
+                        entry.severity > 7 ? '#ef4444' : entry.severity > 5 ? '#f97316' : '#22c55e',
+                    }}
                   />
                   <p className="text-white/60 text-sm line-clamp-1 flex-1">{entry.input}</p>
                   <div className="flex gap-1">
@@ -163,8 +188,22 @@ export default function Dashboard() {
       {entries.length === 0 && (
         <MotionWrapper delay={0.25}>
           <Card className="text-center py-10">
-            <div className="text-3xl mb-3" aria-hidden>🌱</div>
-            <p className="text-white/60 text-sm mb-4">Start your first journal entry to unlock AI insights</p>
+            <div
+              className="w-12 h-12 mx-auto mb-3 rounded-full bg-violet-600/20 border border-violet-500/30 flex items-center justify-center"
+              aria-hidden
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M12 3v18M5 8c2 0 4 1 7 4 3-3 5-4 7-4"
+                  stroke="#a78bfa"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </div>
+            <p className="text-white/60 text-sm mb-4">
+              Start your first journal entry to unlock AI insights
+            </p>
             <Button variant="primary" onClick={() => navigate('/journal')}>
               Write First Entry
             </Button>
