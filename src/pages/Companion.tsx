@@ -30,7 +30,7 @@ export default function Companion() {
   const { stats, latestEntry } = useMood();
 
   useEffect(() => {
-    // Greeting message
+    // Greeting message — depends on async store data unavailable at mount; setState-in-effect is intentional here
     const greeting = profile
       ? `Hi ${profile.name}! I'm your AI wellness companion. I know you're preparing for ${profile.examType}. ${
           latestEntry
@@ -39,6 +39,7 @@ export default function Companion() {
         } What's on your mind today?`
       : "Hi! I'm your AI wellness companion. What's on your mind today?";
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMessages([
       {
         id: '0',

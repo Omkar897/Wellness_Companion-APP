@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card } from '../components/ui/Card';
@@ -24,9 +24,14 @@ const MODE_LABELS: Record<UIMode, string> = {
   quiz: 'Scenario Quiz',
 };
 
+const VALID_MODES: UIMode[] = ['journal', 'pulse', 'quiz'];
+
 export default function Journal() {
   const [searchParams] = useSearchParams();
-  const [mode, setMode] = useState<UIMode>((searchParams.get('mode') as UIMode) ?? 'journal');
+  const modeParam = searchParams.get('mode') as UIMode | null;
+  const [mode, setMode] = useState<UIMode>(
+    modeParam && VALID_MODES.includes(modeParam) ? modeParam : 'journal',
+  );
   const [text, setText] = useState('');
   const [selectedMood, setSelectedMood] = useState<MoodPulse | null>(null);
   const [submitted, setSubmitted] = useState(false);
@@ -34,11 +39,6 @@ export default function Journal() {
   const { loading, result, analyze } = useAI();
   const { addEntry } = useJournalStore();
   const { profile } = useUserStore();
-
-  useEffect(() => {
-    const m = searchParams.get('mode') as UIMode | null;
-    if (m && ['journal', 'pulse', 'quiz'].includes(m)) setMode(m);
-  }, [searchParams]);
 
   async function handleJournalSubmit() {
     if (!text.trim()) return;
@@ -255,5 +255,3 @@ export default function Journal() {
     </div>
   );
 }
-
-

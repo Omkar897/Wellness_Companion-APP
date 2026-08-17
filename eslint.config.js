@@ -31,6 +31,8 @@ export default defineConfig([
       'no-console': ['warn', { allow: ['error', 'warn'] }],
       'prefer-const': 'error',
       'no-var': 'error',
+      // react-hook-form v7's watch() is intentionally non-memoizable; this is a known library limitation
+      'react-hooks/incompatible-library': 'off',
     },
   },
 ])

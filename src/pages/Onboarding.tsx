@@ -44,6 +44,7 @@ export default function Onboarding() {
   });
 
   const name = watch('name');
+  const selectedExamType = watch('examType');
 
   async function onSubmit(data: FormData) {
     setLoading(true);
@@ -197,7 +198,7 @@ export default function Onboarding() {
                     <motion.div
                       whileTap={{ scale: 0.95 }}
                       className={`text-center py-2 px-1 rounded-xl text-xs font-medium border transition-all duration-200
-                        ${watch('examType') === exam ? 'bg-violet-600/30 border-violet-500 text-violet-200' : 'border-white/10 text-white/50 hover:border-white/20'}
+                        ${selectedExamType === exam ? 'bg-violet-600/30 border-violet-500 text-violet-200' : 'border-white/10 text-white/50 hover:border-white/20'}
                       `}
                     >
                       {exam}

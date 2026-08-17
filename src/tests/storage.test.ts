@@ -76,7 +76,7 @@ describe('Encrypted Storage', () => {
   });
 
   it('all STORAGE_KEYS have defined non-empty values', () => {
-    for (const [_k, v] of Object.entries(STORAGE_KEYS)) {
+    for (const v of Object.values(STORAGE_KEYS)) {
       expect(typeof v).toBe('string');
       expect(v.length).toBeGreaterThan(0);
     }
