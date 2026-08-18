@@ -287,7 +287,7 @@ The application should remain usable through demo/fallback functionality when li
 The application is deployed using Vercel.
 
 **Live Application:**
-[https://wellness-companion-sepia.vercel.app/](https://wellness-companion-sepia.vercel.app/)
+[https://wellness-companion-sepia.vercel.app/](https://wellness-companion-app.vercel.app/)
 
 **GitHub Repository:**
 [https://github.com/Omkar897/Wellness_Companion-APP](https://github.com/Omkar897/Wellness_Companion-APP)
