@@ -1,183 +1,334 @@
-# WellnessAI — AI Mental Wellness Companion for Exam Students
+# WellnessAI
 
-> A personalized, privacy-first mental wellness app built for students preparing for high-stakes competitive exams (JEE, NEET, CAT, UPSC, GATE, CUET, and more). Powered by multi-model AI via OpenRouter.
+### AI-Powered Mental Wellness Companion for Competitive Exam Students
+
+WellnessAI is an AI-powered mental wellness companion designed for students preparing for high-pressure competitive exams such as JEE, NEET, CAT, UPSC and similar exams.
+
+Competitive exam preparation is not only a productivity problem. Students regularly deal with stress, anxiety, poor mock-test performance, peer comparison, burnout, lack of motivation and exam pressure.
+
+WellnessAI focuses on that part of the student's experience.
+
+The core idea is:
+
+> **Log → Understand → Respond → Track**
+
+A student can record how they feel, write about what is bothering them, or interact with the AI companion. The application analyzes emotional signals, identifies recurring triggers and provides personalized wellness suggestions.
 
 ---
 
-## What It Does
+## What it does
 
-Competitive exam preparation in India is one of the highest-stress environments a student can be in. WellnessAI gives students a private, judgment-free space to process their emotions daily — and responds with AI analysis that is specific to *their* exam, *their* triggers, and *their* history. Not generic advice. Not platitudes.
+### Mood Tracking
 
-**Core capabilities:**
+Students can quickly record their current mood using a simple mood selector.
 
-- **AI Emotion Analysis** — Llama 3.3 70B extracts emotions, triggers, severity (1–10), and burnout risk from free-text journal entries
-- **Personalized Wellness Responses** — Gemma 3 27B generates exam-aware coping strategies and mindfulness exercises. Banned phrases include "Take breaks", "You've got this", "Stay positive" — the AI is forced to reference the student's specific exam and stated triggers
-- **Gamified Scenario Quiz** — 4 one-at-a-time scenarios with spring-physics animations reveal emotional patterns without requiring the student to write anything
-- **Mood Pulse** — One-tap mood logging with instant AI feedback
-- **Weekly Pattern Analysis** — Nemotron 253B identifies weekly stress patterns and generates structured recommendations
-- **Crisis Detection** — Every input and output is scanned for self-harm signals. Crisis resources (iCall: 9152987821, Vandrevala: 1860-2662-345) are surfaced immediately
-- **Exam Countdown** — Personalised dashboard with days-to-exam, mood ring, and trend tracking
-- **Mindfulness Exercises** — Breathing, grounding, and body-scan exercises
-- **Demo Mode** — Full 7-day realistic demo with a JEE student's journal data, no API key required
+Mood history is used to understand changes in emotional state over time.
+
+### Journaling
+
+Students can write about their day, studies, exams, frustrations or anything affecting their mental state.
+
+Journal entries provide unstructured context that can be analyzed by the AI.
+
+### AI Emotion Analysis
+
+Journal entries can be analyzed to identify:
+
+- Emotions
+- Possible triggers
+- Stress severity
+- Burnout indicators
+
+The extracted information is converted into structured data so it can be used by the rest of the application.
+
+### AI Wellness Companion
+
+The companion uses the student's current emotional state together with historical patterns to generate a more contextual response.
+
+Instead of only responding to the current message, the system can consider recurring emotions, triggers and previously observed patterns.
+
+### Scenario-Based Wellness Quiz
+
+The application includes an interactive scenario-based quiz.
+
+This provides another way for students to express how they feel without requiring them to write a journal entry.
+
+### Wellness Insights
+
+Historical mood and journal information can be analyzed to identify patterns such as recurring emotions and triggers.
+
+The goal is to make the application useful beyond a single conversation.
+
+### Mindfulness and Grounding
+
+The application provides exercises intended to help students calm down, reset and manage stressful moments.
+
+### Safety Layer
+
+Because the application deals with sensitive wellness information, AI responses are passed through a safety layer.
+
+The application includes detection for crisis/self-harm signals and unsafe medical-advice patterns and can redirect users toward appropriate crisis support instead of continuing with a normal wellness response.
+
+> WellnessAI is a wellness-support application and is not intended to diagnose, treat or replace professional mental-health care.
+
+### Privacy-First Storage
+
+Wellness information is sensitive.
+
+The application uses encrypted local storage for user data rather than automatically storing the user's complete wellness history on a remote database.
+
+The application also supports exporting wellness records as JSON.
+
+### Demo Mode
+
+The application includes demo data so the product can be explored without requiring an AI provider account.
+
+This allows the product experience to be demonstrated without requiring users to configure AI infrastructure.
+
+---
+
+## Product Flow
+
+```text
+                 Student
+                    |
+          +---------+---------+
+          |         |         |
+        Mood     Journal     Quiz
+          |         |         |
+          +---------+---------+
+                    |
+              AI Analysis
+                    |
+        +-----------+-----------+
+        |           |           |
+     Emotion      Triggers    Severity
+        |           |           |
+        +-----------+-----------+
+                    |
+          Personalized Response
+                    |
+             Wellness Action
+                    |
+             Track Progress
+                    |
+          Longitudinal Insights
+```
+
+---
+
+## Architecture
+
+The application uses a feature-oriented React architecture.
+
+```text
+src/
+├── app/
+├── components/
+├── features/
+│   ├── companion/
+│   ├── dashboard/
+│   ├── insights/
+│   ├── journal/
+│   ├── mindfulness/
+│   ├── mood/
+│   ├── onboarding/
+│   └── settings/
+├── hooks/
+├── services/
+│   ├── llm/
+│   └── storage/
+├── store/
+├── types/
+├── utils/
+└── ...
+```
+
+### AI Layer
+
+AI functionality is separated into independent responsibilities:
+
+```text
+AI Services
+│
+├── Emotion Extraction
+├── Wellness Response Generation
+├── Pattern Analysis
+├── Response Caching
+└── Safety Guard
+```
+
+Separating these responsibilities makes the AI layer easier to test, replace and extend.
+
+### Storage Layer
+
+User wellness data is accessed through a storage abstraction rather than directly from UI components.
+
+```text
+UI
+ ↓
+Store
+ ↓
+Database Abstraction
+ ↓
+Encrypted Local Storage
+```
+
+This keeps persistence concerns separate from the application UI.
+
+---
+
+## Privacy
+
+The application handles sensitive information such as journal entries, moods and emotional patterns.
+
+The prototype therefore follows a local-first approach where possible.
+
+Stored wellness information is encrypted using the Web Crypto API.
+
+The goal is to minimize unnecessary collection of personal wellness data.
+
+For production, AI provider credentials should remain server-side and should never be exposed to the browser.
+
+---
+
+## AI Provider
+
+The application uses OpenRouter for AI inference.
+
+AI provider credentials should be stored only as server-side environment variables.
+
+The browser should communicate with the application's API layer rather than directly exposing the provider API key.
+
+The application also supports demo/fallback behavior so that the core experience does not depend entirely on live AI availability.
+
+---
+
+## Security Considerations
+
+Important security considerations for a production deployment include:
+
+* Never exposing provider API keys in client-side JavaScript.
+* Keeping AI provider credentials in server-side environment variables.
+* Validating AI responses before using them in the application.
+* Keeping sensitive wellness data encrypted.
+* Applying safety checks to AI input and output.
+* Adding rate limiting and abuse prevention at the API layer.
+* Providing users with clear controls for their stored data.
 
 ---
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Framework | React 19 + TypeScript 6 + Vite 8 |
-| Styling | TailwindCSS v4 (`@tailwindcss/vite`) |
-| Animations | Framer Motion 12 (spring physics, `AnimatePresence`, `useReducedMotion`) |
-| State | Zustand 5 (3 stores: user, journal, settings) |
-| Validation | Zod v4 (`zod/v4` sub-path) |
-| Forms | React Hook Form v7 |
-| Charts | Recharts |
-| Routing | React Router v7 |
-| AI | OpenRouter API (3 models) |
-| Storage | AES-GCM encrypted localStorage (Web Crypto API) |
-| Testing | Vitest 4 + Testing Library (101 tests) |
-| Linting | ESLint flat config + Prettier |
-| Deployment | Vercel |
-
-### AI Models
-
-| Task | Model |
-|------|-------|
-| Emotion extraction | `meta-llama/llama-3.3-70b-instruct` |
-| Wellness responses | `google/gemma-3-27b-it` |
-| Weekly pattern analysis | `nvidia/llama-3.1-nemotron-ultra-253b-v1:free` |
+* React
+* TypeScript
+* Vite
+* Zustand
+* Tailwind CSS
+* OpenRouter
+* Web Crypto API
+* Vitest
+* ESLint
 
 ---
 
-## Project Structure
+## Running Locally
 
-```
-src/
-├── app/              # Router, providers, error boundary
-├── components/
-│   ├── animations/   # FloatingBackground, MotionWrapper, PageTransition
-│   ├── charts/       # MoodTimeline, EmotionHeatmap (Recharts)
-│   ├── journal/      # JournalEditor, AIResponseCard, GamifiedQuiz, InsightCard
-│   ├── layout/       # Navbar (SVG icons), Layout
-│   ├── mood/         # MoodRing, MoodSelector, EmotionBadge
-│   └── ui/           # Button, Card, Input, Modal, ErrorBoundary
-├── hooks/            # useAI, useMood, useLocalStorage, useReducedMotion
-├── mock/             # Demo user profile + 7-day realistic journal data
-├── pages/            # Dashboard, Journal, Insights, Companion, Mindfulness, Onboarding, Settings
-├── services/
-│   ├── analytics/    # moodEngine (timeline, stats, frequency, trends)
-│   ├── llm/          # emotionExtractor, wellnessAgent, patternAnalyzer, safetyGuard, responseCache
-│   └── storage/      # encryptedStorage (AES-GCM), database
-├── store/            # userStore, journalStore, settingsStore (Zustand)
-├── tests/            # 101 tests across 6 files
-├── types/            # emotion, journal, user, ai
-└── utils/            # helpers, constants, crypto, validators
-```
-
----
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js 20+
-- An [OpenRouter](https://openrouter.ai) API key (free tier works)
-
-### Local Setup
+### Install dependencies
 
 ```bash
-# Clone the repo
-git clone https://github.com/Omkar897/Wellness_Companion.git
-cd Wellness_Companion
-
-# Install dependencies
 npm install
+```
 
-# Set your API key
-echo "VITE_OPENROUTER_KEY=sk-or-v1-your-key-here" > .env.local
+### Start development server
 
-# Start development server
+```bash
 npm run dev
 ```
 
-Open **https://wellness-companion-sepia.vercel.app/**
-
-> No API key? Use **Demo Mode** on the Settings page to explore with realistic sample data.
-
----
-
-## Available Scripts
+### Build
 
 ```bash
-npm run dev          # Start dev server
-npm run build        # Production build (tsc + vite)
-npm run lint         # ESLint with zero-warning policy
-npm run lint:fix     # Auto-fix ESLint issues
-npm run format       # Prettier format all src files
-npm test             # Run 101 Vitest tests
-npm run test:watch   # Watch mode
-npm run test:coverage # Coverage report
-npm run preview      # Preview production build
+npm run build
 ```
 
----
+### Lint
 
-## Deployment (Vercel)
+```bash
+npm run lint
+```
 
-1. Import `Omkar897/Wellness_Companion` from GitHub on [vercel.com](https://vercel.com)
-2. Vercel auto-detects Vite — no build config needed
-3. Add one environment variable:
-
-   | Name | Value |
-   |------|-------|
-   | `VITE_OPENROUTER_KEY` | your OpenRouter API key |
-
-4. Deploy
-
----
-
-## Security & Privacy
-
-- **All journal data is stored locally** in the user's browser — nothing is sent to any backend server
-- **AES-GCM encryption** is applied to all localStorage entries using a per-device key generated via the Web Crypto API
-- **API key** is stored encrypted in localStorage or injected via environment variable — never hardcoded
-- **Crisis detection** runs on every AI input and output before display
-- **No tracking, no analytics, no external data collection**
-
----
-
-## Test Coverage
-
-101 tests across 6 test suites:
-
-| Suite | Tests | Coverage |
-|-------|-------|---------|
-| `emotion.test.ts` | 13 | Keyword detection, trigger extraction, severity boundary clamping |
-| `journalFlow.test.ts` | 19 | Mood timeline, stats aggregation, trend detection, emotion frequency |
-| `helpers.test.ts` | 23 | `daysUntilExam`, `formatRelativeTime`, `severityToLabel/Color`, `generateId`, `clamp` |
-| `validators.test.ts` | 19 | UserProfile schema, JournalEntry schema, ApiKey schema |
-| `safetyGuard.test.ts` | 14 | Crisis pattern detection, safe phrase pass-through, Indian helpline numbers |
-| `storage.test.ts` | 13 | Encryption key uniqueness, base64 validity, storage key collision detection |
+### Test
 
 ```bash
 npm test
-# ✓ 101/101 tests passing
 ```
 
 ---
 
-## Key Design Decisions
+## Environment Variables
 
-**Why not a backend?** Privacy-first design. Students journaling about mental health need to know their data cannot be accessed by anyone. A backend-less architecture with client-side encryption achieves this.
+For live AI functionality, configure the required OpenRouter credential through the server-side environment.
 
-**Why multiple AI models?** Each model has a different strength — Llama 3.3 70B excels at structured extraction, Gemma 3 27B at empathetic long-form generation, Nemotron at analytical reasoning over patterns.
+The provider secret should use:
 
-**Why ban generic phrases in AI prompts?** Early testing showed AI responses defaulted to "Take breaks" and "Believe in yourself" — phrases that students preparing for JEE/NEET have heard a thousand times and that carry zero actionable weight. The system prompt explicitly bans these and requires the model to reference the student's specific exam, triggers, and history.
+```text
+OPENROUTER_API_KEY=your_key_here
+```
+
+Do **not** expose the provider credential using a `VITE_` client-side environment variable.
+
+The application should remain usable through demo/fallback functionality when live AI is not configured.
 
 ---
 
-## License
+## Deployment
 
-MIT
+The application is deployed using Vercel.
 
+**Live Application:**
+[https://wellness-companion-sepia.vercel.app/](https://wellness-companion-sepia.vercel.app/)
+
+**GitHub Repository:**
+[https://github.com/Omkar897/Wellness_Companion-APP](https://github.com/Omkar897/Wellness_Companion-APP)
+
+---
+
+## Future Direction
+
+The next stage of WellnessAI would focus on making the wellness intelligence more longitudinal and personalized.
+
+Potential improvements include:
+
+* Server-side AI architecture
+* Stronger stress/burnout signal modeling
+* Intervention effectiveness tracking
+* Personalized coping strategies
+* Better longitudinal pattern detection
+* Stronger crisis-safety architecture
+* User-controlled data deletion/export
+* Privacy controls
+* Rate limiting and abuse prevention
+* Model routing and cost optimization
+
+The long-term product loop is:
+
+```text
+Student Activity
+      ↓
+Mood + Journal + Quiz Signals
+      ↓
+Emotion / Stress Understanding
+      ↓
+Longitudinal Pattern Detection
+      ↓
+Personalized Intervention
+      ↓
+Measure Whether It Helped
+      ↓
+Learn Individual Patterns
+      ↓
+Better Intervention
+```
+
+WellnessAI is intended to be a focused wellness companion for students under academic pressure rather than a generic mental-health chatbot.
